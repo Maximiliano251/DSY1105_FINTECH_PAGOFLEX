@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PagoFlex</string>
+
+    <!--Pantalla Formulario -->
+    <!--Pantalla Perfil -->
+    <!--Descripciones de accesabilidad (TalkBack) -->
+    <string name="cd_mostrar_contrasena">Mostrar contraseña</string>
+    <string name="cd_ocultar_contrasena">Ocultar contraseña</string>
+
+</resources>

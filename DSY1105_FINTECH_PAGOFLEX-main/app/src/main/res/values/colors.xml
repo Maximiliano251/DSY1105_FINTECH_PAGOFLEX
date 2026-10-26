@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sombra_imagen">#B3000000</color> <!--Color negro con 70% de opacidad-->
+</resources>
