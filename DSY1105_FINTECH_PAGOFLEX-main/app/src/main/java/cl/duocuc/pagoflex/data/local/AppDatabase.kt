@@ -29,19 +29,23 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun compromisoPagoDao(): CompromisoPagoDao
     abstract fun pagoDao(): PagoDao
 
-    suspend fun populateDatabase() {
+    suspend fun populateDatabase(db: AppDatabase) {
         // Anexo 9: Inserción de datos iniciales
 
         // 1. Usuarios
-        val usuarioPrincipal = Usuario(
+        val usuarioCamila = Usuario(
             id = 1,
-            nombre = "Juan Pérez",
-            email = "juan.perez@duocuc.cl",
+            nombre = "Camila Rojas",
+            email = "crojas@correo.ejemplo",
+            rut = "15.834.207-3", // <-- RUT del Anexo 9
+            telefono = "+56 9 0000 0101", // <-- Teléfono del Anexo 9
             puntos = 1250,
             racha = 6,
-            nivel = "Plata"
+            nivel = "Plata",
+            avisosActivos = true,
+            diasAnticipacion = 3
         )
-        usuarioDao().insertUsuario(usuarioPrincipal)
+        db.usuarioDao().insertUsuario(usuarioCamila)
 
         // 2. Empresas
         val empresas = listOf(
@@ -77,6 +81,14 @@ abstract class AppDatabase : RoomDatabase() {
                 monto = 32000,
                 fechaVencimiento = "28 Oct 2026",
                 estado = "Pendiente"
+            ),
+            CompromisoPago(
+                id = 4,
+                empresa = "VTR",
+                numeroCliente = "9998887-6",
+                monto = 12000,
+                fechaVencimiento = "05 Nov 2026",
+                estado = "En revisión"
             )
         )
         compromisoPagoDao().insertAll(compromisos)
@@ -112,7 +124,7 @@ abstract class AppDatabase : RoomDatabase() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
                         CoroutineScope(Dispatchers.IO).launch {
-                            getInstance(context.applicationContext).populateDatabase()
+                            getInstance(context.applicationContext).populateDatabase(getInstance(context.applicationContext))
                         }
                     }
                 })

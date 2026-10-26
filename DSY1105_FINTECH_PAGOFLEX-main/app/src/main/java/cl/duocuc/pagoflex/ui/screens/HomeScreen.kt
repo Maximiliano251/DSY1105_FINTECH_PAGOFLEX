@@ -5,6 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cl.duocuc.pagoflex.data.model.CompromisoPago
@@ -20,16 +21,35 @@ fun HomeScreen(
     onNavigateToHistorial: () -> Unit,
     onNavigateToRecompensas: () -> Unit,
     onNavigateToReferidos: () -> Unit,
+    onNavigateToPerfil: () -> Unit, // <-- NUEVO PARÁMETRO
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier,
     puntos: Int,
     racha: Int,
     porcentajeCumplimiento: Double
 ) {
+    // 1. Filtramos la lista AQUÍ AFUERA
+    val deudasActivas = listaCompromisos.filter { it.estado != "Pagado" && it.estado != "Anulado" }
+
     Column(
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Hola, Camila Rojas", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)
+        // 2. Fila con el saludo y el botón de Perfil
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Hola, Camila Rojas",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            TextButton(onClick = onNavigateToPerfil) {
+                Text("Mi Perfil")
+            }
+        }
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TarjetaEstadistica(valor = "%,d".format(puntos), "Puntos Flex", Modifier.weight(1f))
@@ -41,12 +61,11 @@ fun HomeScreen(
 
         Text("Mis Compromisos", style = MaterialTheme.typography.titleLarge)
 
-        if (listaCompromisos.isEmpty()) {
-            Text("No tienes compromisos pendientes.")
+        if (deudasActivas.isEmpty()) {
+            Text("¡Felicidades! No tienes deudas pendientes.")
         } else {
-            listaCompromisos.forEach { compromiso ->
+            deudasActivas.forEach { compromiso ->
                 TarjetaSeccion(titulo = "Deuda con ${compromiso.empresa}") {
-                    // RNF-02: Formato de moneda chileno
                     Text("Monto: $ ${String.format(java.util.Locale("es", "CL"), "%,d", compromiso.monto)}", style = MaterialTheme.typography.bodyLarge)
                     Text("Vence: ${compromiso.fechaVencimiento}", style = MaterialTheme.typography.bodyMedium)
                     Text("Estado: ${compromiso.estado}", color = MaterialTheme.colorScheme.secondary)
@@ -67,5 +86,9 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(4.dp))
             BotonSecundario(texto = "Invita y Gana (Referidos)", onClick = onNavigateToReferidos, modifier = Modifier.fillMaxWidth())
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        BotonSecundario(texto = "Cerrar Sesión", onClick = onLogout, modifier = Modifier.fillMaxWidth())
     }
 }

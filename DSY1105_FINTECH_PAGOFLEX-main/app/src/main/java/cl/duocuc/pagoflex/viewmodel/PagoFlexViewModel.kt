@@ -109,4 +109,9 @@ class PagoFlexViewModel(application: Application) : AndroidViewModel(application
             repository.updateEstadoCompromiso(compromiso.id, "Anulado")
         }
     }
+    fun actualizarUsuario(usuario: Usuario) {
+        viewModelScope.launch {
+            repository.updateUsuario(usuario) // Maxi ya tiene esta función en su Repository
+        }
+    }
 }
